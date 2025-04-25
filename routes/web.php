@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MobilController;
+use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -67,9 +68,11 @@ Route::group(['middleware' => 'auth'], function () {
 	});
 
 	Route::group(['prefix' => 'pemesanan'], function () {
-		Route::get('', [MobilController::class, 'index'])->name('pemesanan.index');
+		Route::get('', [PemesananController::class, 'index'])->name('pemesanan.index');
 		Route::post('load_data', [MobilController::class, 'loadData'])->name('mobil.load_data');
-		Route::get('/tambah', [MobilController::class, 'tambah'])->name('mobil.create');
+		Route::get('/tambah', [PemesananController::class, 'tambah'])->name('pemesanan.create');
+		Route::post('getMobil', [PemesananController::class, 'getMobil'])->name('pemesanan.getMobil');
+
 		Route::get('/show/{id?}', [MobilController::class, 'show'])->name('mobil.show');
 		Route::get('edit/{id}', [MobilController::class, 'edit'])->name('mobil.edit');
 		Route::post('simpan', [MobilController::class, 'simpan'])->name('mobil.simpan');

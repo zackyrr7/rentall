@@ -11,7 +11,7 @@ class PemesananController extends Controller
 {
   public function index()
   {
-        return view('mobil.index');
+        return view('sewa.index');
   }
 
   public function loadData(Request $request)
@@ -73,13 +73,38 @@ class PemesananController extends Controller
 
     public function tambah() 
     {
-        return view('mobil.create');
+        $nama = DB::select("SELECT nama_lengkap from users");
+        $data = [
+            'nama'=>$nama
+        ];
+        
+        return view('sewa.create')->with($data);
+    }
+
+
+    public function getMobil(Request $request)
+    {
+        if($request->ajax()){
+            $tipe = $request->tipe;
+            $tgl_ambil = $request->tgl_ambil;
+            $tgl_pulang = $request->tgl_pulang;
+        }
+
+        $data = DB::select("SELECT
+                            a.id_mobil,a.merk,a.tipe,a.plat_nomor,a.harga_sewa, c.tgl_ambil,c.tgl_pulang
+                            FROM
+                            mobil a
+                            LEFT JOIN sewa b ON a.id_mobil = b.id_mobil
+                            LEFT JOIN dsewa c on b.id_sewa = c.id_sewa
+                            where a.tipe = '$tipe' and  (c.tgl_pulang > $tgl_ambil or c.tgl_pulang is null)");
+                         
+        return response()->json($data);
     }
 
     public function simpan(Request $request)
     {
         $data = $request->data;
-        dd($data);
+        
        
        
 
