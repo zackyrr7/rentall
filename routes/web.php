@@ -69,13 +69,13 @@ Route::group(['middleware' => 'auth'], function () {
 
 	Route::group(['prefix' => 'pemesanan'], function () {
 		Route::get('', [PemesananController::class, 'index'])->name('pemesanan.index');
-		Route::post('load_data', [MobilController::class, 'loadData'])->name('mobil.load_data');
+		Route::post('load_data', [PemesananController::class, 'loadData'])->name('pemesanan.load_data');
 		Route::get('/tambah', [PemesananController::class, 'tambah'])->name('pemesanan.create');
 		Route::post('getMobil', [PemesananController::class, 'getMobil'])->name('pemesanan.getMobil');
 
 		Route::get('/show/{id?}', [MobilController::class, 'show'])->name('mobil.show');
 		Route::get('edit/{id}', [MobilController::class, 'edit'])->name('mobil.edit');
-		Route::post('simpan', [MobilController::class, 'simpan'])->name('mobil.simpan');
+		Route::post('simpan', [PemesananController::class, 'simpan'])->name('sewa.simpan');
 		Route::post('simpanEdit', [UserController::class, 'simpanEdit'])->name('user.simpanEdit');
 	});
 	

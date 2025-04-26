@@ -16,9 +16,15 @@ class PemesananController extends Controller
 
   public function loadData(Request $request)
 {
-    $query = DB::table('mobil')->selectRaw('*');  
+    $query =  DB::table('sewa as a')
+    ->join('dsewa as b', 'a.id_sewa', '=', 'b.id_sewa')
+    ->join('mobil as c', 'a.id_mobil', '=', 'c.id_mobil')
+    ->join('users as d', 'a.id_user', '=', 'd.id')
+    ->select('a.id_sewa','c.merk','c.plat_nomor', 'a.penyewa', 'd.nama_lengkap', 'b.tgl_ambil', 'b.tgl_pulang', 'a.status');
+   
+;  
 
-    $column_search = ['plat_nomor','merk','tipe','tahun','harga_sewa'];
+    $column_search = ['c.merk','c.plat_nomor','a.penyewa','d.nama_lengkap','b.tgl_ambil','b.tgl_pulang','a.status'];
 
     // Filter query dengan pencarian
     $filtered = $query->where(function ($query) use ($column_search, $request) {
@@ -52,18 +58,20 @@ class PemesananController extends Controller
         ->setTransformer(function ($item) {
 
             // Tombol aksi untuk masing-masing user
-            $btn = '<a href="' . route('mobil.show', ['id' => Crypt::encrypt($item->id_mobil)]) . '" class="btn btn-info btn-sm" style="margin-right:4px"><i class="uil-eye"></i></a>';
-            $btn .= '<a href="' . route('mobil.edit', Crypt::encrypt($item->id_mobil)) . '" class="btn btn-warning btn-sm" style="margin-right:4px"><i class="uil-edit"></i></a>';
-            $btn .= '<a href="javascript:void(0);" onclick="hapus(\'' . $item->id_mobil . '\',\'' . $item->plat_nomor . '\');" class="btn btn-danger btn-sm" style="margin-right:4px"><i class="fas fa-trash-alt"></i></a>';
+            $btn = '<a href="' . route('mobil.show', ['id' => Crypt::encrypt($item->id_sewa)]) . '" class="btn btn-info btn-sm" style="margin-right:4px"><i class="uil-eye"></i></a>';
+            $btn .= '<a href="' . route('mobil.edit', Crypt::encrypt($item->id_sewa)) . '" class="btn btn-warning btn-sm" style="margin-right:4px"><i class="uil-edit"></i></a>';
+            $btn .= '<a href="javascript:void(0);" onclick="hapus(\'' . $item->id_sewa . '\',\'' . $item->plat_nomor . '\');" class="btn btn-danger btn-sm" style="margin-right:4px"><i class="fas fa-trash-alt"></i></a>';
             
             // Mengembalikan array dengan kolom data dan tombol aksi
+           
             return [
-                'id' => $item->id_mobil,
-                'plat_nomor' => $item->plat_nomor,
                 'merk' => $item->merk,
-                'tipe' => $item->tipe,
-                'tahun' => $item->tahun,
-                'harga_sewa' => $item->harga_sewa,
+                'plat_nomor' => $item->plat_nomor,
+                'penyewa' => $item->penyewa,
+                'nama_lengkap' => $item->nama_lengkap,
+                'tgl_ambil' => $item->tgl_ambil,
+                'tgl_pulang' => $item->tgl_pulang,
+                'status' => $item->status,
                 'aksi' => $btn,
             ];
         })
@@ -73,7 +81,7 @@ class PemesananController extends Controller
 
     public function tambah() 
     {
-        $nama = DB::select("SELECT nama_lengkap from users");
+        $nama = DB::select("SELECT nama_lengkap,id from users");
         $data = [
             'nama'=>$nama
         ];
@@ -104,25 +112,43 @@ class PemesananController extends Controller
     public function simpan(Request $request)
     {
         $data = $request->data;
-        
+    
        
-       
+       $id = DB::table('sewa')->max('id_sewa');
+       if ($id == null) {
+        $id = 1;
+       } else{
+        $id = $id+1;
+       }
 
         DB::beginTransaction();
         try {
           
 
-            DB::table('mobil')->where('id_mobil',$data['id'])
-            ->update([
+            DB::table('sewa')
+            ->insert([
             
-            'plat_nomor' => $data['plat'],
-            'merk' => $data['merk'],
-            'tipe' => $data['tipe'],
-            'tahun' => $data['tahun'],
-            'harga_sewa' => $data['harga'],
+            'id_sewa' => $id,
+            'id_mobil' => $data['id'],
+            'id_user' => $data['anggota'],
+            'status' => 0,
+            'penyewa' => $data['penyewa'],
          
+            ]);
+
+
+            DB::table('dsewa')->insert([
+                'id_sewa' => $id,
+                'diskon' => $data['discount'],
+                'harga' => $data['harga'],
+                'total' => $data['total'],
+                'tgl_ambil' => $data['tgl_ambil'],
+                'tgl_pulang' => $data['tgl_pulang'],
 
             ]);
+
+
+
             DB::commit();
             return response()->json(['message' => '1']);
         } catch (\Throwable $th) {

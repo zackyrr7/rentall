@@ -28,7 +28,7 @@
                         `<option value="" disabled selected>Pilih Mobil</option>`);
                     $.each(data, function(index, data) {
                         $('#mobil').append(
-                            `<option value="${data.id}" 
+                            `<option value="${data.id_mobil}" 
                              data-harga="${data.harga_sewa}" 
                              data-merk = "${data.merk}"
                              data-plat = "${data.plat_nomor}"
@@ -70,7 +70,11 @@
 
 
         $('#mobil').on('change', function() {
+            let id = this.value;
+            $('#id_mobil').val(id);
+
             let harga = $(this).find(':selected').data('harga');
+
             let hari_sewa = document.getElementById('hari_sewa').value;
             $('#harga').val(rupiah2(harga));
             let total = hari_sewa * harga;
@@ -95,44 +99,59 @@
 
 
         $('#simpan').on('click', function(e) {
-            let merk = document.getElementById('merk').value;
             let tipe = document.getElementById('tipe').value;
-            let plat = document.getElementById('plat').value;
-            let tahun = document.getElementById('tahun').value;
-            let harga = angka(document.getElementById('harga').value);
+            let id = document.getElementById('id_mobil').value;
+            let tgl_ambil = document.getElementById('tgl_ambil').value;
+            let tgl_pulang = document.getElementById('tgl_pulang').value;
+            let harga = rupiah(document.getElementById('harga').value);
+            let discount = angka(document.getElementById('discount').value);
+            let total = rupiah(document.getElementById('total').value);
+            let penyewa = document.getElementById('penyewa').value;
+            let anggota = document.getElementById('anggota').value;
 
 
 
-            if (!merk) {
-                return alert('Merk harus diisi!')
-            }
+
+
             if (!tipe) {
                 return alert('Tipe harus diisi!')
             }
-            if (!plat) {
-                return alert('Plat harus diisi!')
+            if (!tgl_ambil) {
+                return alert('tanggal ambil harus diisi!')
             }
-            if (!tahun) {
-                return alert('Tahun harus diisi!')
+            if (!tgl_pulang) {
+                return alert('tanggal pulang harus diisi!')
             }
             if (!harga) {
                 return alert('harga harus diisi!')
             }
+            if (!penyewa) {
+                return alert('penyewa harus diisi!')
+            }
+            if (!anggota) {
+                return alert('anggota harus diisi!')
+            }
+
 
 
 
 
             let data = {
-                merk,
+
                 tipe,
-                plat,
-                tahun,
+                id,
+                tgl_ambil,
+                tgl_pulang,
                 harga,
+                discount,
+                total,
+                penyewa,
+                anggota
 
             };
 
             $.ajax({
-                url: "{{ route('mobil.simpan') }}",
+                url: "{{ route('sewa.simpan') }}",
                 type: "POST",
                 dataType: 'json',
                 data: {
@@ -142,7 +161,7 @@
                 success: function(response) {
                     if (response.message == '1') {
                         alert('Data berhasil disimpan!');
-                        window.location.href = "{{ route('mobil.index') }}";
+                        window.location.href = "{{ route('sewa.index') }}";
                     } else if (response.message == '2') {
                         alert('Mobil sudah terdaftar');
 

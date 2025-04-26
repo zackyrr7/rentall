@@ -12,14 +12,16 @@
                         @csrf
                         <div class="table-rep-plugin">
                             <div class="table-responsive mb-0" data-pattern="priority-columns">
-                                <table id="mobil" class="table" style="width: 100%">
+                                <table id="sewa" class="table" style="width: 100%">
                                     <thead>
                                         <tr>
                                             <th class="text-center">No.</th>
-                                            <th class="text-center">mobil</th>
-                                            <th class="text-center">pengeluar</th>
-                                            <th class="text-center">Tanggal amibl</th>
-                                            <th class="text-center">Tanggal Pulang</th>
+                                            <th class="text-center">Merk</th>
+                                            <th class="text-center">Plat</th>
+                                            <th class="text-center">Penyewa</th>
+                                            <th class="text-center">Nama Anggota</th>
+                                            <th class="text-center">Tanggal ambil</th>
+                                            <th class="text-center">Tanggal pulang</th>
                                             <th class="text-center">Status</th>
                                             <th class="text-center">Aksi</th>
                                         </tr>

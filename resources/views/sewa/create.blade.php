@@ -51,6 +51,8 @@
                             <label for="mobil" class="col-md-2 col-form-label">mobil</label>
                             <div class="col-md-4">
                                 <select class="form-control" id="mobil" name="mobil" required>
+                                    <input class="form-control" type="text" id="id_mobil" name="id_mobil" readonly
+                                        hidden>
                                 </select>
 
                             </div>
@@ -78,7 +80,7 @@
                         <div class="mb-3 row">
                             <label for="penyewa" class="col-md-2 col-form-label">Penyewa</label>
                             <div class="col-md-4">
-                                <input class="form-control" type="text" id="harga" name="penyewa"
+                                <input class="form-control" type="text" id="penyewa" name="penyewa"
                                     placeholder="Silahkan diisi dengan nama penyewa">
 
                             </div>
@@ -88,7 +90,7 @@
                                     <optgroup label="Daftar Anggota">
                                         <option value="" selected disabled>Silahkan Pilih Anggota</option>
                                         @foreach ($nama as $item)
-                                            <option value="{{ $item->nama_lengkap }}">{{ $item->nama_lengkap }}</option>
+                                            <option value="{{ $item->id }}">{{ $item->nama_lengkap }}</option>
                                         @endforeach
                                     </optgroup>
                                 </select>
@@ -105,8 +107,28 @@
                 </div>
             </div>
         </div>
+
+    </div>
+    <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="statusModalLabel">Detail Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Diisi oleh JavaScript -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
+
+
+
 
 @push('js')
     @include('sewa.js.create')
