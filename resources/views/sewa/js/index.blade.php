@@ -9,7 +9,7 @@
 
         // Cek dulu apakah sudah pernah diinisialisasi
         if (!$.fn.DataTable.isDataTable('#sewa')) {
-            $('#sewa').DataTable({
+            let table = $('#sewa').DataTable({
                 responsive: true,
                 ordering: false,
                 serverSide: true,
@@ -20,12 +20,19 @@
                     type: "POST",
                     data: function(d) {
                         d._token = "{{ csrf_token() }}"; // untuk keamanan Laravel
+                        d.status = document.getElementById('status').value;
                     }
                 },
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
                         className: "text-center"
+                    },
+                    {
+                        data: 'id_sewa',
+                        name: 'id_sewa',
+                        className: "text-center",
+                        visible: false,
                     },
                     {
                         data: 'merk',
@@ -129,14 +136,92 @@
                     },
                 ]
             });
+            $('#status').on('change', function() {
+                table.ajax.reload();
+            });
         }
+
     });
+
+
 
 
     $(document).on('click', '.status-badge', function() {
-        alert('muncul');
+        let status = $(this).data('status');
+        let table = $('#sewa').DataTable();
+        let rowData = table.row($(this).closest('tr')).data();
+
+        let id_sewa = rowData.id_sewa;
+        let merk = rowData.merk;
+        let penyewa = rowData.penyewa;
+        let tgl_ambil = rowData.tgl_ambil;
+        let tgl_pulang = rowData.tgl_pulang;
+
+        $('#tgl_ambil2').val(new Date(tgl_ambil).toLocaleDateString('id-ID', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        }));
+        $('#tgl_pulang2').val(new Date(tgl_pulang).toLocaleDateString('id-ID', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        }));
+        $('#id_sewa2').val(id_sewa);
+        $('#penyewa2').val(penyewa);
+        $('#merk2').val(merk);
+
+
+        if (status == 'Boking') {
+            $('#modal_rincian_boking').modal('show');
+        } else if (status == 'Berlangsung') {
+            $('#modal_rincian_berlangsung').modal('show');
+        } else if (status == 'Selesai') {
+            alert('Status sudah selesai.')
+        } else {
+            alert('Status sudah dibatalkan. Buat booking baru untuk menyewa mobil ini.')
+        }
+
+
     });
 
+    $('#simpan_boking').on('click', function() {
+        updateStatus();
+    });
+
+
+    function updateStatus() {
+        let id_sewa = $('#id_sewa2').val();
+        let tipe = document.getElementById('tipe').value;
+        if (tipe == '') {
+            alert('Silahkan pilih status terlebih dahulu');
+
+        }
+        let tanya = confirm('Apakah anda yakin untuk mengubah status sewa menjad :' + tipe);
+        if (tanya == true) {
+            $.ajax({
+                url: "{{ route('pemesanan.updateStatus') }}",
+                type: "POST",
+                dataType: 'json',
+                data: {
+                    id_sewa: id_sewa,
+                    tipe: tipe,
+
+                    "_token": "{{ csrf_token() }}",
+                },
+                success: function(data) {
+                    if (data.message == '1') {
+                        alert('Proses update Berhasil');
+                        window.location.reload();
+                    } else {
+                        alert('Proses update Gagal...!!!');
+                    }
+                }
+            })
+        } else {
+            return false;
+        }
+    }
 
     function hapus(id_mobil, plat_nomor) {
         let tanya = confirm('Apakah anda yakin untuk menghapus data moobil dengan plat : ' + plat_nomor);

@@ -72,10 +72,11 @@ Route::group(['middleware' => 'auth'], function () {
 		Route::post('load_data', [PemesananController::class, 'loadData'])->name('pemesanan.load_data');
 		Route::get('/tambah', [PemesananController::class, 'tambah'])->name('pemesanan.create');
 		Route::post('getMobil', [PemesananController::class, 'getMobil'])->name('pemesanan.getMobil');
+		Route::post('updateStatus', [PemesananController::class, 'updateStatus'])->name('pemesanan.updateStatus');
+		Route::post('simpan', [PemesananController::class, 'simpan'])->name('pemesanan.simpan');
 
 		Route::get('/show/{id?}', [MobilController::class, 'show'])->name('mobil.show');
 		Route::get('edit/{id}', [MobilController::class, 'edit'])->name('mobil.edit');
-		Route::post('simpan', [PemesananController::class, 'simpan'])->name('sewa.simpan');
 		Route::post('simpanEdit', [UserController::class, 'simpanEdit'])->name('user.simpanEdit');
 	});
 	

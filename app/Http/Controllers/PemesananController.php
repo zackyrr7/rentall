@@ -16,13 +16,41 @@ class PemesananController extends Controller
 
   public function loadData(Request $request)
 {
-    $query =  DB::table('sewa as a')
-    ->join('dsewa as b', 'a.id_sewa', '=', 'b.id_sewa')
-    ->join('mobil as c', 'a.id_mobil', '=', 'c.id_mobil')
-    ->join('users as d', 'a.id_user', '=', 'd.id')
-    ->select('a.id_sewa','c.merk','c.plat_nomor', 'a.penyewa', 'd.nama_lengkap', 'b.tgl_ambil', 'b.tgl_pulang', 'a.status');
-   
-;  
+    $status = $request->status;
+
+    // Ubah status ke bentuk numerik yang sesuai
+    $statusMap = [
+        'Boking' => 0,
+        'Berlangsung' => 1,
+        'Selesai' => 2,
+        'Batal' => 3,
+    ];
+    
+    // Mulai query builder
+    $query = DB::table('sewa as a')
+        ->join('dsewa as b', 'a.id_sewa', '=', 'b.id_sewa')
+        ->join('mobil as c', 'a.id_mobil', '=', 'c.id_mobil')
+        ->join('users as d', 'a.id_user', '=', 'd.id')
+        ->select(
+            'a.id_sewa',
+            'c.merk',
+            'c.plat_nomor',
+            'a.penyewa',
+            'd.nama_lengkap',
+            'b.tgl_ambil',
+            'b.tgl_pulang',
+            'a.status'
+        );
+    
+    // Tambahkan kondisi status jika ada
+    if (isset($statusMap[$status])) {
+        $query->where('a.status', $statusMap[$status]);
+    }
+    
+    // Eksekusi dan ambil data
+    $query = $query;
+  
+    
 
     $column_search = ['c.merk','c.plat_nomor','a.penyewa','d.nama_lengkap','b.tgl_ambil','b.tgl_pulang','a.status'];
 
@@ -65,6 +93,7 @@ class PemesananController extends Controller
             // Mengembalikan array dengan kolom data dan tombol aksi
            
             return [
+                'id_sewa' => $item->id_sewa,
                 'merk' => $item->merk,
                 'plat_nomor' => $item->plat_nomor,
                 'penyewa' => $item->penyewa,
@@ -222,4 +251,43 @@ class PemesananController extends Controller
     return view('mobil.edit')->with('data', $data);}
 
   
+
+
+    public function UpdateStatus(Request $request)
+    {
+        $id_sewa = $request->id_sewa;
+        $tipe = $request->tipe;
+
+        if ($tipe == 'Boking') {
+            $status = 0;
+        } elseif ($tipe == 'Berlangsung') {
+            $status = 1;
+        } elseif ($tipe == 'Selesai') {
+            $status = 2;
+        } else {
+            $status = 3;
+        }
+    
+        DB::beginTransaction();
+        try {
+            DB::table('sewa')->where('id_sewa', $id_sewa)->
+            update(
+                [
+                    'status' =>$status,
+                ]
+            );
+            DB::commit();
+            return response()->json(['message' => '1']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'message' => '0',
+                'error'=> $th->getMessage()
+            ]);
+        }
+    }
+
 }
+
+
+

@@ -3,14 +3,14 @@
 function tgl($tgl)
 {
     $tanggal  = explode('-', $tgl);
-    $bulan  = MSbulan($tanggal[1]);
+    $bulan  = bulan($tanggal[1]);
     $tahun  =  $tanggal[0];
     // dd($tanggal);
     return  $tanggal[2] . ' ' . $bulan . ' ' . $tahun;
 }
 
-if (!function_exists('MSbulan')) {
-    function MSbulan($bulan)
+if (!function_exists('bulan')) {
+    function bulan($bulan)
     {
         switch ($bulan) {
             case 1:

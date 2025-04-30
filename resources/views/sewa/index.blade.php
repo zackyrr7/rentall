@@ -6,7 +6,24 @@
             <div class="col-12 h-100">
                 <div class="card h-100 m-0">
                     <div class="card-header">
-                        <a href="{{ route('pemesanan.create') }}" class="btn btn-primary float-right">Input Pemesanan</a>
+                        <div class="mb-3 row">
+                            <div class="col-md-2 col-form-label">
+                                <select class="form-control select2-multiple" style="width: 100%" id="status"
+                                    name="status">
+                                    <option value="" disabled selected>Silahkan Pilih</option>
+                                    <option value="Boking">Boking</option>
+                                    <option value="Berlangsung">Berlangsung</option>
+                                    <option value="selesai">selesai</option>
+                                    <option value="Batal">Batal</option>
+                                    <option value="">Semua</option>
+
+                                </select>
+                            </div>
+                            <div class="col-md-10">
+                                <a href="{{ route('pemesanan.create') }}" class="btn btn-primary float-right">Input
+                                    Pemesanan</a>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         @csrf
@@ -16,6 +33,7 @@
                                     <thead>
                                         <tr>
                                             <th class="text-center">No.</th>
+                                            <th class="text-center" hidden>id</th>
                                             <th class="text-center">Merk</th>
                                             <th class="text-center">Plat</th>
                                             <th class="text-center">Penyewa</th>
@@ -29,6 +47,108 @@
                                     <tbody></tbody>
                                 </table>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Rincian Boking --}}
+    <div id="modal_rincian_boking" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Status Sewa</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Informasi penyewa dan mobil -->
+                    <div class="mb-3 row">
+                        <label for="penyewa2" class="col-md-2 col-form-label">Penyewa</label>
+                        <div class="col-md-4">
+                            <input type="text" id="penyewa2" name="penyewa2" class="form-control" readonly>
+                        </div>
+
+                        <label for="merk2" class="col-md-2 col-form-label">Mobil</label>
+                        <div class="col-md-4">
+                            <input type="text" id="merk2" name="merk2" class="form-control" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Tanggal ambil dan pulang -->
+                    <div class="mb-3 row">
+                        <label for="tgl_ambil2" class="col-md-2 col-form-label">Tanggal Ambil</label>
+                        <div class="col-md-4">
+                            <input type="text" id="tgl_ambil2" name="tgl_ambil2" class="form-control" readonly>
+                            <input type="hidden" id="id_sewa2" name="id_sewa2">
+                        </div>
+
+                        <label for="tgl_pulang2" class="col-md-2 col-form-label">Tanggal Pulang</label>
+                        <div class="col-md-4">
+                            <input type="text" id="tgl_pulang2" name="tgl_pulang2" class="form-control" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="mb-4 row">
+                        <label for="tipe" class="col-md-2 col-form-label">Status</label>
+                        <div class="col-md-6">
+                            <select id="tipe" name="tipe" class="form-control" required>
+                                <optgroup label="Daftar Status">
+                                    <option value="" selected disabled>Silahkan Pilih Status</option>
+                                    <option value="Berlangsung">Berlangsung</option>
+                                    <option value="Batal">Batal</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tombol -->
+                    <div class="mb-3 row">
+                        <div class="col-md-12 text-center">
+                            <button id="simpan_boking" class="btn btn-primary btn-md">Simpan</button>
+                            <button type="button" class="btn btn-warning btn-md" data-dismiss="modal">Keluar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    {{-- Modal Rincian Berlangsung --}}
+    <div id="modal_rincian_berlangsung" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Status Sewa</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Konten modal -->
+                    <div class="mb-3 row">
+                        <label for="tgl_ambil" class="col-md-2 col-form-label">Tanggal Ambil</label>
+                        <div class="col-md-4">
+                            <input class="form-control" type="text" placeholder="Silahkan diisi dengan tanggal ambil"
+                                id="tgl_ambil" name="tgl_ambil">
+                        </div>
+                        <label for="tgl_pulang" class="col-md-2 col-form-label">Tanggal Pulang</label>
+                        <div class="col-md-4">
+                            <input class="form-control" type="text" placeholder="Silahkan diisi dengan tanggal Pulang"
+                                id="tgl_pulang" name="tgl_pulang">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col-md-12 text-center">
+                            <button id="simpan" class="btn btn-md btn-primary">Simpan</button>
+                            <button type="button" class="btn btn-md btn-warning" data-dismiss="modal">Keluar</button>
                         </div>
                     </div>
                 </div>

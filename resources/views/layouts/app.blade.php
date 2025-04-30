@@ -83,6 +83,7 @@
     @endauth
 
     <script src="{{ asset('black') }}/js/core/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('black') }}/js/core/popper.min.js"></script>
     <script src="{{ asset('black') }}/js/core/bootstrap.min.js"></script>
     <script src="{{ asset('black') }}/js/plugins/perfect-scrollbar.jquery.min.js"></script>
@@ -98,6 +99,8 @@
     <script src="{{ asset('black') }}/js/theme.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 

@@ -151,7 +151,7 @@
             };
 
             $.ajax({
-                url: "{{ route('sewa.simpan') }}",
+                url: "{{ route('pemesanan.simpan') }}",
                 type: "POST",
                 dataType: 'json',
                 data: {
@@ -161,7 +161,7 @@
                 success: function(response) {
                     if (response.message == '1') {
                         alert('Data berhasil disimpan!');
-                        window.location.href = "{{ route('sewa.index') }}";
+                        window.location.href = "{{ route('pemesanan.index') }}";
                     } else if (response.message == '2') {
                         alert('Mobil sudah terdaftar');
 
