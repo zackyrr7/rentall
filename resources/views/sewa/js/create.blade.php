@@ -33,7 +33,7 @@
                              data-merk = "${data.merk}"
                              data-plat = "${data.plat_nomor}"
                              data-tgl_pulang = "${data.tgl_pulang}"
-                            >${data.merk} |  ${data.plat_momor} | ${data.tgl_pulang} </option>`
+                            >${data.merk} |  ${data.plat_nomor} | Tanggal Pulang: ${data.tgl_pulang} </option>`
                         );
                     })
                 },

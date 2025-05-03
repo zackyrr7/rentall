@@ -6,47 +6,154 @@
             }
         });
 
-        $('#simpan').on('click', function(e) {
-            let id = document.getElementById('id_mobil').value;
-            let merk = document.getElementById('merk').value;
+        function getMobil() {
             let tipe = document.getElementById('tipe').value;
-            let plat = document.getElementById('plat').value;
-            let tahun = document.getElementById('tahun').value;
-            let harga = angka(document.getElementById('harga').value);
+            let tgl_ambil = document.getElementById('tgl_ambil').value;
+            let tgl_pulang = document.getElementById('tgl_pulang').value;
+
+            $.ajax({
+                url: "{{ route('pemesanan.getMobil') }}",
+                type: "POST",
+                dataType: 'json',
+                data: {
+                    tipe: tipe,
+                    tgl_ambil: tgl_ambil,
+                    tgl_pulang: tgl_pulang
+                },
+                beforeSend: function() {
+                    $("#overlay").fadeIn(100);
+                },
+                success: function(data) {
+                    $('#mobil').empty();
+                    $('#mobil').append(
+                        `<option value="" disabled selected>Pilih Mobil</option>`);
+                    $.each(data, function(index, data) {
+                        $('#mobil').append(
+                            `<option value="${data.id_mobil}" 
+                             data-harga="${data.harga_sewa}" 
+                             data-merk = "${data.merk}"
+                             data-plat = "${data.plat_nomor}"
+                             data-tgl_pulang = "${data.tgl_pulang}"
+                            >${data.merk} |  ${data.plat_nomor} | Tanggal Pulang: ${data.tgl_pulang} </option>`
+                        );
+                    })
+                },
+                complete: function(data) {
+                    $("#overlay").fadeOut(100);
+                }
+            });
+
+        }
 
 
 
-            if (!merk) {
-                return alert('Merk harus diisi!')
+        $('#tipe, #tgl_ambil, #tgl_pulang').on('change', function() {
+            $('#harga').val('');
+            $('#discount').val('');
+            $('#total').val('');
+            let tipe = $('#tipe').val();
+            let tgl_ambil = $('#tgl_ambil').val();
+            let tgl_pulang = $('#tgl_pulang').val();
+
+
+
+            if (tipe && tgl_ambil && tgl_pulang) {
+                if (tgl_ambil > tgl_pulang) {
+                    alert("Tanggal pengambilan tidak boleh lebih besar dari tanggal pengembalian!");
+                    return;
+                }
+                let date_ambil = new Date(tgl_ambil);
+                let date_pulang = new Date(tgl_pulang);
+                let total_hari = (date_pulang - date_ambil) / (1000 * 60 * 60 * 24);
+                $('#hari_sewa').val(total_hari);
+                getMobil();
             }
+        });
+
+
+        $('#mobil').on('change', function() {
+            let id = this.value;
+            $('#id_mobil').val(id);
+
+            let harga = $(this).find(':selected').data('harga');
+
+            let hari_sewa = document.getElementById('hari_sewa').value;
+            $('#harga').val(rupiah2(harga));
+            let total = hari_sewa * harga;
+            $('#total').val(rupiah2(total));
+        })
+        let timer
+
+        $('#discount').on('input', function() {
+            clearTimeout(timer);
+            timer = setTimeout(function() {
+                let hari_sewa = document.getElementById('hari_sewa').value;
+                let harga = rupiah(document.getElementById('harga').value);
+                let discount = angka(document.getElementById('discount').value);
+                let total = (hari_sewa * harga) - discount;
+                $('#total').val(rupiah2(total));
+            }, 500); // 
+        })
+
+
+
+
+
+
+        $('#simpan').on('click', function(e) {
+            let tipe = document.getElementById('tipe').value;
+            let id = document.getElementById('id_mobil').value;
+            let tgl_ambil = document.getElementById('tgl_ambil').value;
+            let tgl_pulang = document.getElementById('tgl_pulang').value;
+            let harga = rupiah(document.getElementById('harga').value);
+            let discount = angka(document.getElementById('discount').value);
+            let total = rupiah(document.getElementById('total').value);
+            let penyewa = document.getElementById('penyewa').value;
+            let anggota = document.getElementById('anggota').value;
+
+
+
+
+
             if (!tipe) {
                 return alert('Tipe harus diisi!')
             }
-            if (!plat) {
-                return alert('Plat harus diisi!')
+            if (!tgl_ambil) {
+                return alert('tanggal ambil harus diisi!')
             }
-            if (!tahun) {
-                return alert('Tahun harus diisi!')
+            if (!tgl_pulang) {
+                return alert('tanggal pulang harus diisi!')
             }
             if (!harga) {
                 return alert('harga harus diisi!')
             }
+            if (!penyewa) {
+                return alert('penyewa harus diisi!')
+            }
+            if (!anggota) {
+                return alert('anggota harus diisi!')
+            }
+
 
 
 
 
             let data = {
-                merk,
+
                 tipe,
-                plat,
-                tahun,
+                id,
+                tgl_ambil,
+                tgl_pulang,
                 harga,
-                id
+                discount,
+                total,
+                penyewa,
+                anggota
 
             };
 
             $.ajax({
-                url: "{{ route('mobil.simpanEdit') }}",
+                url: "{{ route('pemesanan.simpanEdit') }}",
                 type: "POST",
                 dataType: 'json',
                 data: {
@@ -56,7 +163,7 @@
                 success: function(response) {
                     if (response.message == '1') {
                         alert('Data berhasil disimpan!');
-                        window.location.href = "{{ route('mobil.index') }}";
+                        window.location.href = "{{ route('pemesanan.index') }}";
                     } else if (response.message == '2') {
                         alert('Mobil sudah terdaftar');
 
@@ -82,6 +189,8 @@
         // format number 1000000 to 1,234,567
         return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
     }
+
+
 
     function formatCurrency(input, blur) {
         // appends $ to value, validates decimal side
@@ -161,5 +270,9 @@
         let n1 = n.split('.').join('');
         let rupiah = n1.split(',').join('.');
         return parseFloat(rupiah) || 0;
+    }
+
+    function rupiah2(angka) {
+        return parseInt(angka).toLocaleString('id-ID');
     }
 </script>

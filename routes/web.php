@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\MobilController;
 use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\UserController;
@@ -66,7 +67,7 @@ Route::group(['middleware' => 'auth'], function () {
 		Route::post('simpanEdit', [MobilController::class, 'simpanEdit'])->name('mobil.simpanEdit');
 		Route::post('destroy', [MobilController::class, 'destroy'])->name('mobil.hapus');
 	});
-
+	
 	Route::group(['prefix' => 'pemesanan'], function () {
 		Route::get('', [PemesananController::class, 'index'])->name('pemesanan.index');
 		Route::post('load_data', [PemesananController::class, 'loadData'])->name('pemesanan.load_data');
@@ -74,10 +75,26 @@ Route::group(['middleware' => 'auth'], function () {
 		Route::post('getMobil', [PemesananController::class, 'getMobil'])->name('pemesanan.getMobil');
 		Route::post('updateStatus', [PemesananController::class, 'updateStatus'])->name('pemesanan.updateStatus');
 		Route::post('simpan', [PemesananController::class, 'simpan'])->name('pemesanan.simpan');
+		Route::get('/show/{id?}', [PemesananController::class, 'show'])->name('pemesanan.show');
+		Route::post('destroy', [PemesananController::class, 'destroy'])->name('pemesanan.hapus');
+		Route::get('edit/{id}', [PemesananController::class, 'edit'])->name('pemesanan.edit');
+		Route::post('simpanEdit', [PemesananController::class, 'simpanEdit'])->name('pemesanan.simpanEdit');
+	});
+	Route::group(['prefix' => 'Laporan'], function () {
+		Route::get('/pendapatan', [LaporanController::class, 'indexPendapatan'])->name('pendapatan.index');
+		Route::get('/pendapatan/preview', [LaporanController::class, 'cetakanPendapatan'])->name('pendapatan.preview');
 
-		Route::get('/show/{id?}', [MobilController::class, 'show'])->name('mobil.show');
-		Route::get('edit/{id}', [MobilController::class, 'edit'])->name('mobil.edit');
-		Route::post('simpanEdit', [UserController::class, 'simpanEdit'])->name('user.simpanEdit');
+
+
+		Route::post('load_data', [PemesananController::class, 'loadData'])->name('pemesanan.load_data');
+		Route::get('/tambah', [PemesananController::class, 'tambah'])->name('pemesanan.create');
+		Route::post('getMobil', [PemesananController::class, 'getMobil'])->name('pemesanan.getMobil');
+		Route::post('updateStatus', [PemesananController::class, 'updateStatus'])->name('pemesanan.updateStatus');
+		Route::post('simpan', [PemesananController::class, 'simpan'])->name('pemesanan.simpan');
+		Route::get('/show/{id?}', [PemesananController::class, 'show'])->name('pemesanan.show');
+		Route::post('destroy', [PemesananController::class, 'destroy'])->name('pemesanan.hapus');
+		Route::get('edit/{id}', [PemesananController::class, 'edit'])->name('pemesanan.edit');
+		Route::post('simpanEdit', [PemesananController::class, 'simpanEdit'])->name('pemesanan.simpanEdit');
 	});
 	
 

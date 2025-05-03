@@ -6,124 +6,84 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
+use PDF;
 
-class PemesananController extends Controller
+class LaporanController extends Controller
 {
-  public function index()
+  public function indexPendapatan()
   {
-        return view('sewa.index');
+        return view('laporan.pendapatan.index');
   }
 
-  public function loadData(Request $request)
-{
-    $status = $request->status;
-
-    // Ubah status ke bentuk numerik yang sesuai
-    $statusMap = [
-        'Boking' => 0,
-        'Berlangsung' => 1,
-        'Selesai' => 2,
-        'Batal' => 3,
-    ];
-    
-    // Mulai query builder
-    $query = DB::table('sewa as a')
-        ->join('dsewa as b', 'a.id_sewa', '=', 'b.id_sewa')
-        ->join('mobil as c', 'a.id_mobil', '=', 'c.id_mobil')
-        ->join('users as d', 'a.id_user', '=', 'd.id')
-        ->select(
-            'a.id_sewa',
-            'c.merk',
-            'c.plat_nomor',
-            'a.penyewa',
-            'd.nama_lengkap',
-            'b.tgl_ambil',
-            'b.tgl_pulang',
-            'a.status'
-        );
-    
-    // Tambahkan kondisi status jika ada
-    if (isset($statusMap[$status])) {
-        $query->where('a.status', $statusMap[$status]);
-    }
-    
-    // Eksekusi dan ambil data
-    $query = $query;
   
+  public function cetakanPendapatan(Request $request)
+  {
+
+
+      
+     
+      $margin_atas = $request->margin_atas;
+      $margin_bawah = $request->margin_bawah;
+      $margin_kiri = $request->margin_kiri;
+      $margin_kanan = $request->margin_kanan;
+      $jenis_print = $request->jenis_print;
+    $tgl_awal = $request->tgl_awal;
+    $tgl_akhir = $request->tgl_akhir;
+
+     
+      $tgl_awal2 = tgl($request->tgl_awal);
+      $tgl_akhir2 = tgl($request->tgl_akhir);
+      
+      $isi = DB::select("SELECT
+		a.penyewa,
+    c.merk,
+    c.plat_nomor,
+    c.harga_sewa,
+    DATEDIFF(b.tgl_pulang, b.tgl_ambil) AS hari,
+		b.diskon,b.total
+FROM
+    sewa a
+    LEFT JOIN dsewa b ON a.id_sewa = b.id_sewa
+    LEFT JOIN mobil c ON a.id_mobil = c.id_mobil
+WHERE
+    a.status = 2 and tgl_pulang BETWEEN '$tgl_awal' and '$tgl_akhir';
+");
+     
+
+
+      $data = [
+
+
+       
+          'tgl_awal' => $tgl_awal2,
+          'tgl_akhir' => $tgl_akhir2,
+          'isi' => $isi
+          
     
 
-    $column_search = ['c.merk','c.plat_nomor','a.penyewa','d.nama_lengkap','b.tgl_ambil','b.tgl_pulang','a.status'];
 
-    // Filter query dengan pencarian
-    $filtered = $query->where(function ($query) use ($column_search, $request) {
-        foreach ($column_search as $eachElement) {
-            $query->orWhere($eachElement, 'LIKE', '%' . $request->search['value'] . '%');
-        }
-    });
+      ];
+;
+      $view = view('laporan.pendapatan.cetak')->with($data);
+    if ($jenis_print == 'pdf') {
+        $pdf = PDF::loadView('laporan.pendapatan.cetak', $data)
+          ->setPaper('a4', 'landscape')
+          ->setOption('margin-top', $margin_atas)
+          ->setOption('margin-bottom', $margin_bawah)
+          ->setOption('margin-left', $margin_kiri)
+          ->setOption('margin-right', $margin_kanan);
+        return $pdf->download('laporan.pdf');
+    
+      } elseif ($jenis_print == 'excel') {
+          header("Cache-Control:no-cache,no-store,must-revalidate");
+          header("Content-Type:application/vnd.ms-excel");
+          header("Content-Disposition:attachment;filename=laporan.xls");
 
-    // Menentukan jumlah total record
-    if (!$request->search['value']) {
-        $record_total = $query->count(); // Total record tanpa filter pencarian
-        $data = $query
-            ->skip($request->start)
-            ->take($request->length)
-            ->get();
-    } else {
-        $record_total = $filtered->count(); // Total record setelah filter pencarian
-        $data = $filtered
-            ->skip($request->start)
-            ->take($request->length)
-            ->get();
-    }
-
-    return DataTables::of($data)
-        ->with([
-            'recordsTotal' => $record_total,
-            'recordsFiltered' => $record_total,
-        ])
-        ->rawColumns(['aksi']) // pastikan kolom 'aksi' bisa di-render dengan HTML
-        ->addIndexColumn()
-        ->setTransformer(function ($item) use ($status) {
-
-            if ($item->status =='Boking') {
-            $btn = '<a href="' . route('pemesanan.show', ['id' => Crypt::encrypt($item->id_sewa)]) . '" class="btn btn-info btn-sm" style="margin-right:4px"><i class="uil-eye"></i></a>';
-            $btn .= '<a href="' . route('pemesanan.edit', Crypt::encrypt($item->id_sewa)) . '" class="btn btn-warning btn-sm" style="margin-right:4px"><i class="uil-edit"></i></a>';
-            $btn .= '<a href="javascript:void(0);" onclick="hapus(\'' . $item->id_sewa . '\',\'' . $item->plat_nomor . '\');" class="btn btn-danger btn-sm" style="margin-right:4px"><i class="fas fa-trash-alt"></i></a>';
-            
-        } else{
-                $btn = '<a href="' . route('pemesanan.show', ['id' => Crypt::encrypt($item->id_sewa)]) . '" class="btn btn-info btn-sm" style="margin-right:4px"><i class="uil-eye"></i></a>';
-
-            }
-
-            // Tombol aksi untuk masing-masing user
-            
-            // Mengembalikan array dengan kolom data dan tombol aksi
-           
-            return [
-                'id_sewa' => $item->id_sewa,
-                'merk' => $item->merk,
-                'plat_nomor' => $item->plat_nomor,
-                'penyewa' => $item->penyewa,
-                'nama_lengkap' => $item->nama_lengkap,
-                'tgl_ambil' => $item->tgl_ambil,
-                'tgl_pulang' => $item->tgl_pulang,
-                'status' => $item->status,
-                'aksi' => $btn,
-            ];
-        })
-        ->skipPaging() // Menjaga paging tetap aktif
-        ->make(true); // Mengembalikan response DataTables
-}
-
-    public function tambah() 
-    {
-        $nama = DB::select("SELECT nama_lengkap,id from users");
-        $data = [
-            'nama'=>$nama
-        ];
-        
-        return view('sewa.create')->with($data);
-    }
+          return $view;
+      } else {
+          return $view;
+      }
+  }
 
 
     public function getMobil(Request $request)

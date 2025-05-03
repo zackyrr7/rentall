@@ -6,57 +6,128 @@
             <div class="col-12 h-100">
                 <div class="card ">
                     <div class="card-header">
-                        Show Mobil
+                        Data Pemesanan
                     </div>
                     <div class="card-body">
                         @csrf
-                        <div class="mb-3 row">
-                            <label for="merk" class="col-md-2 col-form-label">Merk</label>
-                            <div class="col-md-10">
-                                <input class="form-control" type="text" readonly value="{{ $data->merk }}"
-                                    placeholder="Silahkan isi dengan merk" id="merk" name="merk">
-
-                            </div>
-                        </div>
 
                         <div class="mb-3 row">
                             <label for="tipe" class="col-md-2 col-form-label">tipe</label>
                             <div class="col-md-4">
-                                <input class="form-control" type="text" readonly value="{{ $data->tipe }}"
-                                    placeholder="Silahkan isi dengan merk" id="merk" name="merk">
+                                <input class="form-control" type="text" value="{{ $data[0]->tipe }}" disabled
+                                    placeholder="Silahkan diisi dengan tanggal ambil" id="tgl_ambil" name="tgl_ambil">
 
                             </div>
-                            <label for="plat" class="col-md-2 col-form-label">Plat Nomor</label>
+                            <label for="tipe" class="col-md-2 col-form-label">Status</label>
+
+                            @php
+                                if ($data[0]->STATUS == '0') {
+                                    $status = 'Boking';
+                                } elseif ($data[0]->STATUS == '1') {
+                                    $status = 'Berlangsung';
+                                } elseif ($data[0]->STATUS == '2') {
+                                    $status = 'Selesai';
+                                } else {
+                                    $status = 'Dibatalkan';
+                                }
+
+                            @endphp
+
+
+
                             <div class="col-md-4">
-                                <input class="form-control" type="text" readonly value="{{ $data->plat_nomor }}"
-                                    placeholder="Silahkan isi dengan plat nomor" id="plat" name="plat">
+                                <input class="form-control" type="text" value="{{ $status }}" disabled
+                                    placeholder="Silahkan diisi dengan tanggal ambil" id="tgl_ambil" name="tgl_ambil">
+
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label for="tgl_ambil" class="col-md-2 col-form-label">Tanggal Ambil</label>
+                            <div class="col-md-4">
+                                <input class="form-control" type="date" value="{{ $data[0]->tgl_ambil }}" disabled
+                                    placeholder="Silahkan diisi dengan tanggal ambil" id="tgl_ambil" name="tgl_ambil">
+                            </div>
+                            <label for="tgl_pulang" class="col-md-2 col-form-label">Tanggal Pulang</label>
+                            <div class="col-md-4">
+                                <input class="form-control" type="date"
+                                    placeholder="Silahkan diisi dengan tanggal Pulang" value="{{ $data[0]->tgl_pulang }}"
+                                    disabled id="tgl_pulang" name="tgl_pulang">
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label for="hari_sewa" class="col-md-2 col-form-label">Total hari penyewaan</label>
+                            <div class="col-md-4">
+                                <input class="form-control" type="text"
+                                    value="{{ \Carbon\Carbon::parse($data[0]->tgl_pulang)->diffInDays(\Carbon\Carbon::parse($data[0]->tgl_ambil)) }}"
+                                    id="hari_sewa" name="hari_sewa" readonly>
                             </div>
 
                         </div>
+
+
                         <div class="mb-3 row">
-                            <label for="tahun" class="col-md-2 col-form-label">Tahun</label>
+                            <label for="mobil" class="col-md-2 col-form-label">mobil</label>
                             <div class="col-md-4">
-                                <input class="form-control" type="text" readonly value="{{ $data->tahun }}"
-                                    placeholder="Silahkan isi dengan tahun mobil" id="tahun" name="tahun">
+                                <input class="form-control" type="text" id="id_mobil"
+                                    value="{{ $data[0]->merk . ' | ' . $data[0]->plat_nomor . ' |  ' . $data[0]->tgl_pulang }}"
+                                    name="id_mobil" readonly>
                             </div>
-                            <label for="harga" class="col-md-2 col-form-label">Harga Sewa</label>
+                            <label for="harga" class="col-md-2 col-form-label">Harga</label>
                             <div class="col-md-4">
-                                <input type="text" class="form-control" name="harga" id="harga"
-                                    pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" readonly value="{{ rupiah($data->harga_sewa) }}"
+                                <input class="form-control" type="text" id="harga"
+                                    value="{{ rupiah($data[0]->harga) }}" name="harga" readonly style="text-align: right">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="discount" class="col-md-2 col-form-label">Discount</label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" name="discount" id="discount"
+                                    value="{{ rupiah($data[0]->diskon) }}" readonly pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$"
                                     data-type="currency" style="text-align: right">
                             </div>
 
+                            <label for="total" class="col-md-2 col-form-label">Total</label>
+                            <div class="col-md-4">
+                                <input class="form-control" type="text" id="total" name="total"
+                                    value="{{ rupiah($data[0]->total) }}" readonly style="text-align: right">
+                            </div>
+                        </div>
+
+
+                        <div class="mb-3 row">
+                            <label for="penyewa" class="col-md-2 col-form-label">Penyewa</label>
+                            <div class="col-md-4">
+                                <input class="form-control" type="text" id="penyewa" name="penyewa" disabled
+                                    value="{{ $data[0]->penyewa }}" placeholder="Silahkan diisi dengan nama penyewa">
+
+                            </div>
+                            <label for="anggota" class="col-md-2 col-form-label">Anggota pengeluar</label>
+                            <div class="col-md-4">
+                                <input class="form-control" type="text" id="penyewa" name="penyewa" disabled
+                                    value="{{ $data[0]->nama_lengkap }}"
+                                    placeholder="Silahkan diisi dengan nama penyewa">
+                            </div>
                         </div>
 
                         <div style="float: right;">
                             {{-- <button type="button" class="btn btn-primary btn-md" id="simpan">Simpan</button> --}}
 
-                            <a href="{{ route('mobil.index') }}" class="btn btn-warning btn-md">Kembali</a>
+                            <a href="{{ route('pemesanan.index') }}" class="btn btn-warning btn-md">Kembali</a>
                         </div>
 
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 @endsection
+
+
+
+
+@push('js')
+    @include('sewa.js.create')
+@endpush
