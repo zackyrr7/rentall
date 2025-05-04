@@ -10,7 +10,7 @@
             e
                 .preventDefault(); // <- penting untuk mencegah submit bawaan kalau tombol ada di dalam <form>
 
-            $(this).prop('disabled', true); // mencegah double click
+
 
             let nama = $('#nm_lengkap').val();
             let username = $('#username').val();

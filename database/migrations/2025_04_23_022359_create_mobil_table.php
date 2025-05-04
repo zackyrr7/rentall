@@ -16,7 +16,7 @@ class CreateMobilTable extends Migration
             $table->string('tipe');
             $table->integer('tahun');
             $table->decimal('harga_sewa', 10, 2);
-            $table->enum('status', ['Tersedia', 'Disewa', 'Servis'])->default('Tersedia');
+         
         });
     }
 

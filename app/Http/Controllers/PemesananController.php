@@ -20,10 +20,12 @@ class PemesananController extends Controller
 
     // Ubah status ke bentuk numerik yang sesuai
     $statusMap = [
+        'Semua' => null,
         'Boking' => 0,
         'Berlangsung' => 1,
         'Selesai' => 2,
         'Batal' => 3,
+        
     ];
     
     // Mulai query builder
@@ -43,7 +45,7 @@ class PemesananController extends Controller
         );
     
     // Tambahkan kondisi status jika ada
-    if (isset($statusMap[$status])) {
+    if (isset($statusMap[$status]) && $statusMap[$status] !== null) {
         $query->where('a.status', $statusMap[$status]);
     }
     

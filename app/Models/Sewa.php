@@ -15,13 +15,11 @@ class Sewa extends Model
     public $timestamps = false; // Jika tidak pakai created_at dan updated_at
 
     protected $fillable = [
+        'id_sewa',
         'id_mobil',
         'id_user',
-        'tanggal_sewa',
-        'tanggal_kembali',
-        'tanggal_pengembalian',
-        'total_bayar',
         'status',
+        'penyewa',
     ];
 
     /**

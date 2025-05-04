@@ -66,13 +66,11 @@ WHERE
 ;
       $view = view('laporan.pendapatan.cetak')->with($data);
     if ($jenis_print == 'pdf') {
-        $pdf = PDF::loadView('laporan.pendapatan.cetak', $data)
-          ->setPaper('a4', 'landscape')
-          ->setOption('margin-top', $margin_atas)
-          ->setOption('margin-bottom', $margin_bawah)
-          ->setOption('margin-left', $margin_kiri)
-          ->setOption('margin-right', $margin_kanan);
-        return $pdf->download('laporan.pdf');
+        $pdf = PDF::loadHtml($view)
+        ->setOrientation('landscape')
+        ->setPaper('a4');
+     
+    return $pdf->stream('laporan.pdf');
     
       } elseif ($jenis_print == 'excel') {
           header("Cache-Control:no-cache,no-store,must-revalidate");

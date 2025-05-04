@@ -15,7 +15,7 @@
                                     <option value="Berlangsung">Berlangsung</option>
                                     <option value="selesai">selesai</option>
                                     <option value="Batal">Batal</option>
-                                    <option value="">Semua</option>
+                                    <option value="Semua">Semua</option>
 
                                 </select>
                             </div>

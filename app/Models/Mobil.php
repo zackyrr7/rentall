@@ -21,7 +21,7 @@ class Mobil extends Model
         'tipe',
         'tahun',
         'harga_sewa',
-        'status',
+        
     ];
 
     /**

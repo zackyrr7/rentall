@@ -13,11 +13,9 @@ class CreateSewaTable extends Migration
             $table->id('id_sewa'); // primary key
             $table->unsignedBigInteger('id_mobil');
             $table->unsignedBigInteger('id_user');
-            $table->date('tanggal_sewa');
-            $table->date('tanggal_kembali');
-            $table->date('tanggal_pengembalian')->nullable();
-            $table->decimal('total_bayar', 10, 2)->default(0);
-            $table->enum('status', ['Berlangsung', 'Selesai', 'Dibatalkan'])->default('Berlangsung');
+            $table->unsignedBigInteger('status');
+            $table->string('penyewa');
+           
 
             // Foreign keys
             $table->foreign('id_mobil')->references('id_mobil')->on('mobil')->onDelete('cascade');
