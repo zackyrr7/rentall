@@ -2,8 +2,7 @@
 
 @section('content')
     <div class="col-md-10 text-center ml-auto mr-auto">
-        <h3 class="mb-5">Log in to see how you can speed up your web development with out of the box CRUD for #User
-            Management and more.</h3>
+        <h3 class="mb-5">SISTEM MANAJEMEN RENTAL MOBIL</h3>
     </div>
     <div class="col-lg-4 col-md-6 ml-auto mr-auto">
         <form class="form" method="post" action="{{ route('login') }}">
@@ -15,8 +14,7 @@
                     <h1 class="card-title">{{ __('Log in') }}</h1>
                 </div>
                 <div class="card-body">
-                    <p class="text-dark mb-2">Sign in with <strong>admin@black.com</strong> and the password
-                        <strong>secret</strong></p>
+
                     <div class="input-group{{ $errors->has('email') ? ' has-danger' : '' }}">
                         <div class="input-group-prepend">
                             <div class="input-group-text">

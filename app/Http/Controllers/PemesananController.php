@@ -144,13 +144,13 @@ class PemesananController extends Controller
         //                     LEFT JOIN dsewa c on b.id_sewa = c.id_sewa
         //                     where a.tipe = '$tipe' and  (c.tgl_pulang > $tgl_ambil or c.tgl_pulang is null)");
 
-                            $data = DB::select("SELECT a.*, 
+    $data = DB::select("SELECT a.*, 
     (
         SELECT MIN(c2.tgl_pulang)
         FROM sewa b2
         JOIN dsewa c2 ON b2.id_sewa = c2.id_sewa
         WHERE b2.id_mobil = a.id_mobil
-          AND c2.tgl_pulang <= '$tgl_ambil' -- hanya ambil tanggal pulang ke depan
+          AND c2.tgl_pulang <= '$tgl_ambil'
     ) AS tgl_pulang
 FROM mobil a
 WHERE a.id_mobil NOT IN (
@@ -159,13 +159,11 @@ WHERE a.id_mobil NOT IN (
     JOIN sewa b2 ON a2.id_mobil = b2.id_mobil
     JOIN dsewa c2 ON b2.id_sewa = c2.id_sewa
     WHERE
-        ('$tgl_ambil' BETWEEN c2.tgl_ambil AND c2.tgl_pulang)
-        OR ('$tgl_pulang' BETWEEN c2.tgl_ambil AND c2.tgl_pulang)
-        OR (c2.tgl_ambil BETWEEN '$tgl_ambil' AND '$tgl_pulang')
-        OR (c2.tgl_pulang BETWEEN '$tgl_ambil' AND '$tgl_pulang')
+        ('$tgl_ambil' < c2.tgl_pulang AND '$tgl_pulang' > c2.tgl_ambil)
 )
 AND a.tipe = '$tipe';
-");
+
+    ");
                          
         return response()->json($data);
     }

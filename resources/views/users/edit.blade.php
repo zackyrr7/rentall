@@ -15,7 +15,7 @@
                             <div class="col-md-10">
                                 <input class="form-control" type="text" value="{{ $data->nama_lengkap }}"
                                     placeholder="Silahkan isi dengan nama lengkap" id="nm_lengkap" name="nm_lengkap"
-                                    readonly value="{{ old('nm_lengkap') }}">
+                                    value="{{ old('nm_lengkap') }}">
                                 @error('nm_lengkap')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
