@@ -15,7 +15,7 @@ class CreateUsersTable extends Migration
             $table->string('username')->unique()->nullable();
             $table->string('email')->unique();
             $table->string('password');
-            $table->enum('role', ['Admin', 'Anggota'])->default('Anggota');
+            $table->enum('role', ['Admin', 'Anggota'])->default('Admin');
             $table->string('no_hp')->nullable();
             $table->date('tanggal_daftar')->nullable();
             $table->rememberToken();

@@ -11,6 +11,7 @@
 
 $role = DB::table('users')->select('role')->where('id',$id)->first();
 
+
 @endphp
 
         <ul class="nav">
@@ -20,7 +21,7 @@ $role = DB::table('users')->select('role')->where('id',$id)->first();
                     <p>{{ __('Dashboard') }}</p>
                 </a>
             </li>
-            @if ($role == 'Admin')
+            @if ($role->role == 'Admin')
             <li>
                 <a data-toggle="collapse" href="#laravel-examples" aria-expanded="false">
                     <i class="tim-icons icon-single-02"></i>
@@ -55,7 +56,7 @@ $role = DB::table('users')->select('role')->where('id',$id)->first();
                     <p>{{ __('Pemesanan') }}</p>
                 </a>
             </li>
-            @if ($role == "Admin")
+            @if ($role->role == "Admin")
             <li>
                 <a data-toggle="collapse" href="#laravel-exampless" aria-expanded="false">
                     <i class="tim-icons icon-coins"></i>
