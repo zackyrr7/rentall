@@ -4,6 +4,15 @@
             <a href="#" class="simple-text logo-mini">{{ __('AR') }}</a>
             <a href="#" class="simple-text logo-normal">{{ __('Artha Royal') }}</a>
         </div>
+
+
+@php
+ $id = Auth::user()->id;
+
+$role = DB::table('users')->select('role')->where('id',$id)->first();
+
+@endphp
+
         <ul class="nav">
             <li>
                 <a href="{{ route('home') }}">
@@ -11,6 +20,7 @@
                     <p>{{ __('Dashboard') }}</p>
                 </a>
             </li>
+            @if ($role == 'Admin')
             <li>
                 <a data-toggle="collapse" href="#laravel-examples" aria-expanded="false">
                     <i class="tim-icons icon-single-02"></i>
@@ -35,6 +45,9 @@
                     </ul>
                 </div>
             </li>
+                
+            @endif
+            
 
             <li>
                 <a href="{{ route('pemesanan.index') }}">
@@ -42,8 +55,7 @@
                     <p>{{ __('Pemesanan') }}</p>
                 </a>
             </li>
-
-
+            @if ($role == "Admin")
             <li>
                 <a data-toggle="collapse" href="#laravel-exampless" aria-expanded="false">
                     <i class="tim-icons icon-coins"></i>
@@ -63,6 +75,10 @@
                     </ul>
                 </div>
             </li>
+            @endif
+
+
+            
 
 
         </ul>

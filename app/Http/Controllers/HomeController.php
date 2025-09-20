@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 class HomeController extends Controller
 {
     /**
@@ -20,7 +23,12 @@ class HomeController extends Controller
      * @return \Illuminate\View\View
      */
     public function index()
-    {
-        return view('dashboard');
-    }
+{
+    $id = Auth::user()->id;
+
+    $role = DB::table('users')->where('id', $id)->value('role');
+
+    return view('dashboard', compact('role'));
+}
+
 }
